@@ -29,3 +29,47 @@ A entrega final está prevista para o dia **26 de abril**. O plano de ação ime
 * **Econometria:** Rodar as regressões e tratar as variáveis.
 * **Ciência de Dados:** Padronização Z-score e calibração do modelo de clusterização.
 * **Análise e Redação:** Interpretação dos resultados e fechamento do relatório técnico em LaTeX.
+
+* 11/04/2026
+* ####Tratamento e reamostragem mensal
+- **Correção aplicada:** CDI passou de média simples diária (`resample().mean()`) para
+  acumulado mensal por capitalização composta (`resample().prod()`)
+  - Motivo: média diária e retorno mensal têm escalas incompatíveis para a regressão de betas
+  - Fórmula: `(1 + CDI_dia)^n - 1` via produto composto das taxas diárias
+- IPCA: média mensal (dado já é mensal, resample não altera)
+- IMAB11: retorno percentual mensal calculado sobre último preço do mês (`pct_change * 100`)
+- **Corte temporal aplicado:** dados filtrados até `2025-12-31` (sem vazamento)
+- Shape final: 71 meses × 3 colunas (fev/2020 → dez/2025)
+- Colunas: `CDI_Mensal`, `IPCA_Mensal`, `IMAB_ret`
+- Exportado: `dados_macro_tratados.csv`
+
+---
+
+### ETAPA 2 — Ortogonalização das Variáveis Macroeconômicas
+
+**Arquivo:** `etapa2_ortogonalizacao.py`
+
+#### Bloco 2.1 — Carregamento e validação
+- Leitura do `dados_macro_tratados.csv` com validação das 3 colunas esperadas
+- Exibição de estatísticas descritivas e contagem de NaNs
+
+#### Bloco 2.2 — Ortogonalização via OLS (Gram-Schmidt econométrico)
+- Problema: CDI, IPCA e IMA-B são colineares — não podem entrar juntos na regressão de betas
+- Solução: ortogonalização sequencial em 2 passos via OLS
+  - **Passo 1:** `IPCA_Mensal ~ CDI_Mensal` → resíduo `u1_IPCA` (choque puro de inflação)
+  - **Passo 2:** `IMAB_ret ~ CDI_Mensal + IPCA_Mensal` → resíduo `u2_IMAB` (choque puro de juro real)
+  - CDI_Mensal permanece inalterado como vetor-âncora
+- Resultado: vetores (CDI_Mensal, u1_IPCA, u2_IMAB) estatisticamente independentes
+
+#### Bloco 2.3 — Validação da ortogonalidade
+- Teste de correlação de Pearson entre todos os pares de vetores
+- Correlações resultantes: r = 0.000000 em todos os pares (p = 1.0)
+- Status: aprovado
+
+#### Bloco 2.4 — Visualização
+- Painel 2×2: séries originais normalizadas, vetores ortogonalizados, heatmaps de correlação antes/depois
+- Exportado: `diagnostico_ortogonalizacao.png`
+
+#### Bloco 2.5 — Exportação
+- Exportado: `macro_ortogonalizada.csv` (71 meses × 3 colunas)
+
