@@ -164,7 +164,7 @@ A entrega final está prevista para o dia **26 de abril**. O plano de ação ime
 ---
  
 ---
- 
+# Dia 13/04/2026
 ### ETAPA  — Hierarchical Agglomerative Clustering (HAC)
  
 **Arquivo:** `etapa5_hac.py`
