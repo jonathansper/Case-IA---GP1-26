@@ -30,7 +30,8 @@ A entrega final está prevista para o dia **26 de abril**. O plano de ação ime
 * **Ciência de Dados:** Padronização Z-score e calibração do modelo de clusterização.
 * **Análise e Redação:** Interpretação dos resultados e fechamento do relatório técnico em LaTeX.
 
-####11/04/2026
+# Dia 11/04/2026
+
 * ####Tratamento e reamostragem mensal
 - **Correção aplicada:** CDI passou de média simples diária (`resample().mean()`) para
   acumulado mensal por capitalização composta (`resample().prod()`)
