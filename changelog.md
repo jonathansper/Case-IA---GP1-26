@@ -30,6 +30,28 @@ A entrega final está prevista para o dia **26 de abril**. O plano de ação ime
 * **Ciência de Dados:** Padronização Z-score e calibração do modelo de clusterização.
 * **Análise e Redação:** Interpretação dos resultados e fechamento do relatório técnico em LaTeX.
 
+## Dia 31/03
+
+### **Desenvolvimento Técnico:**
+* **Pipeline de Extração Macro:** O Jonathan desenvolveu o script para captura automatizada de indicadores macroeconômicos via API do SGS (Banco Central), garantindo a integração direta das séries de **CDI (diário)** e **IPCA (mensal)**.
+* **Solução para Renda Fixa (IMA-B):** Ele utilizou o **IMAB11** via Yahoo Finance como *proxy* para a performance dos títulos públicos indexados à inflação.
+* **Refatoração e Limpeza:** O código foi estruturado de forma modular (função `extracao_bcb`), incluindo o tratamento de tipos de dados e padronização de índices temporais para as próximas etapas do projeto.
+
+### **Limpeza Dados Macro:**
+
+* **Exploração Inicial dos Dados:** análise exploratória da base macroeconômica consolidada (`dados_macro_brutos.csv`), incluindo verificação de tipos de dados, estatísticas descritivas e identificação de valores faltantes.
+
+* **Padronização Temporal:** as séries foram organizadas com índice temporal consistente e ordenado, garantindo a integridade da estrutura de séries temporais.
+
+* **Ajuste de Frequência:** devido à heterogeneidade das frequências (CDI diário, IPCA mensal e IMA-B diário), foi realizada a agregação para frequência mensal, utilizando médias para compatibilização das variáveis.
+
+* **Transformação de Variáveis:** a série do IMA-B, originalmente em nível de preço, foi convertida em retornos percentuais, tornando-a adequada para modelagem econométrica.
+
+* **Tratamento de Valores Faltantes:** após as transformações, foram removidas observações inconsistentes (NaN) resultantes do cálculo de retornos e da agregação temporal.
+
+* **Geração da Base Final:** foi construída a base `dados_macro_tratados.csv`, pronta para utilização na etapa de modelagem econométrica.
+
+
 # Dia 11/04/2026
 
 * ####Tratamento e reamostragem mensal
@@ -163,8 +185,7 @@ A entrega final está prevista para o dia **26 de abril**. O plano de ação ime
 - Exportado: `base_hac.csv`
  
 ---
- 
----
+
 # Dia 13/04/2026
 ### ETAPA  — Hierarchical Agglomerative Clustering (HAC)
  
@@ -257,4 +278,49 @@ A entrega final está prevista para o dia **26 de abril**. O plano de ação ime
   - `perfil_subclusters.png` — heatmap dos 7 subclusters internos
   - `dendrograma.png` — dendrograma completo do HAC principal
   - `criterios_corte.png` — gráfico WCV / Silhouette / Davies-Bouldin
+
+  # Dia 25/04/2026
+
+  ### Reunião Gabi e Ana para falar sobre o Dashboard do projeto:
+
+  #### Ficou decidido que: utilizaremos o Streamlit. 
+
+O dash deve ser visto do ponto de vista do investidor, ele usaria nossa plataforma para entender o risco real (arquétipo) além do setor clássico.
+
+Layout
+Dividido em duas grandes áreas para separar a visão técnica da visão individual:
+
+Visão Macro (Árvore de Decisão): Foco no mercado total e na hierarquia dos clusters.
+
+Visão Filtrável (Deep Dive): Onde o usuário interage com os tickers e vê as métricas de cada ativo.
+
+Funcionalidades
+Visão Macro e Clusterização:
+
+* Dendrograma Interativo : A ideia é que, ao passar o mouse, o ramo fique colorido e apareça um quadro explicativo descrevendo as características daquele grupo.
+
+* KPIs dos 10 Arquétipos: cards no topo com as médias de cada grupo (ex: Cluster "Core Conservador" -> Média DY: X%, Vacância: Y%).
+
+* Mapa de Diversificação: um scatter plot de sensibilidade ao IPCA vs. dividend yield, com os pontos coloridos por cluster.
+
+Visão Filtrável e Exploração:
+
+* Seletor de FII (Search Bar): O usuário digita o ticker e o dashboard responde:
+1. o arquétipo: "HGLG11 pertence ao arquétipo Tijolo com Vacância.";
+2. o porquê (features): mostrar as métricas (LTV, Betas, etc.) que justificam ele estar naquele grupo.
+3. pares comparáveis: uma lista de fundos que estão no mesmo cluster (pares de risco).
+
+* Análise de Carteira: campo para o usuário inserir seus ativos. O sistema gera um gráfico de pizza mostrando a concentração por Arquétipo (ex: "Sua carteira está 80% em Core Conservador, sugerimos diversificar em Duration Longo").
+
+Diferenciais Técnicos 
+Atualização dinâmica: botão para rodar o script e atualizar os Betas macro via API do BCB.
+
+Transparência estatística: aba para mostrar as métricas de validação do modelo (Silhouette Score e WCV) para quem quiser ver o "rigor" por trás da análise.
+
+---
+
+# Dia 12/05/2026
+
+Jonathan criou uma aba com os KPIs cards e o scatter plot e outra aba com o seletor de FIIs.
+
 
