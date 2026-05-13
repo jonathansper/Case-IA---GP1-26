@@ -1,7 +1,4 @@
-dados_macro_brutos.csv
-dados_macro_tratados.csv
-df_micro_final.csv
+__pycache__/
 *.png
-*.csv
 *.pyc
 .streamlit/
